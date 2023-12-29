@@ -1,0 +1,288 @@
+.mainDiv{
+    display: flex;
+    flex-direction: column;
+    margin-top: 140px;
+}
+.contentDiv{
+    padding: 0;
+    width: 210mm;
+    margin: 180px auto;
+    left: 17px;
+    border: 2px solid black;
+    padding-bottom: 30px;
+    /* position: absolute; */
+}
+
+.invoiceMakerDiv{
+    position: fixed;
+    height: 160px;
+    width: 100%;
+    display: flex;
+    padding: 0px 10px;
+    background-color: white;
+    width: 100%;
+    box-shadow: 0px 1px 4px black;
+    z-index: 1;
+}
+
+.billheader{
+    height: 100px;
+    display: flex;
+    border-bottom: 1px solid black;
+}
+
+.headline{
+    width: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.headline h2{
+    color: black;
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.gst-pan{
+    height: 25px;
+    width: 100%;
+    border-bottom: 1px solid black;
+    margin: 0;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    font-weight: bold;
+    background-color: rgb(191, 223, 223);
+}
+.partner-details{
+    height: 25px;
+    width: 100%;
+    border-bottom: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.date-invoice-number,.billing-details{
+    height: 60px;
+    border-bottom: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding-left: 10px;
+}
+
+.billing-details{
+    padding: 0;
+    height: 80px;
+    width: 100%;
+}
+
+.recepientDiv{
+    height: 25px;
+    padding-left: 10px;
+    width: 100%;
+    border-bottom: 1px solid black;
+    display: flex;
+    align-items: center;
+}
+
+.address-details{
+    padding-left: 10px;
+    width: 60%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.itmeTable{
+    width: 100%;
+    border-bottom: 1px solid black;
+    border-collapse: collapse;
+}
+
+.itmeTable>thead>tr>th{
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    padding: 3px;
+}
+
+.itmeTable>thead>tr>th:first-child{
+    border-left:none;
+}
+
+.itmeTable>tbody>tr>td{
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    padding: 3px;
+    text-align: center;
+}
+
+.itmeTable>tbody>tr>td:first-child{
+    border-left:none;
+}
+.itmeTable>tfoot>tr>td{
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    padding: 3px;
+    text-align: center;
+}
+
+.itmeTable>tfoot>tr>td:first-child{
+    border-left:none;
+}
+
+#grandTotal{
+    height: 50px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.grandTotal{
+    margin: 0;
+    margin-top: 20px;
+    width: 270px;
+    padding: 2px;
+    border: 1px solid black;
+    /* border-bottom: 1px solid black; */
+    text-align: center;
+}
+
+.recepientsDetails{
+    height: 100%;
+    width: 50%;
+    display: flex;
+    /* background-color: brown; */
+}
+
+.recepientsDetailsLabels{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: flex-start;
+    margin-right: 20px;
+}
+
+.recepientsDetailsInputs{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.recepientsDetailsInputs input{
+    width: 400px;
+}
+
+.purchasedItems{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 100%;
+    width: 50%;
+}
+
+/* .purchasedItems input, select{
+    width: 70%;
+    height: 30px;
+    padding: 5px;
+} */
+
+.printInvoice{
+    position: relative;
+    top: 10px;
+    right: 10px;
+    height: 30px;
+    width: 100px;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    background-color: rebeccapurple;
+    border: none;
+    border-radius: 5px;
+    padding: 4px 8px;
+    margin-left: 5px;
+}
+
+#insertItem{
+    padding: 7px 10px;
+    background-color: #008B8B;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    box-shadow: 1px 1px 3px grey;
+}
+
+.floatingActionDiv{
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    display: flex;
+    background-color: none;
+}
+
+.floatingActionBtn{
+    margin: 5px;
+    height: 30px;
+    width: 50px;
+    font-size: 15px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 8px;
+}
+
+#closeViewBtn{
+    background-color: rgb(185, 185, 185);
+    background-image: url("/images/closeIcon.png");
+    background-size: contain;
+    background-blend-mode: multiply;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.preview{
+    margin: 5px auto;
+    /* top: 15px; */
+}
+
+.footer{
+    margin-top: 50px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-evenly;
+}
+
+.footer h3, p{
+    margin-right: 50px;
+}
+
+#printPreview{
+    background-image: url("/images/printerIcon.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+#closePreview{
+    background-image: url("/images/closeIcon.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-blend-mode: multiply;
+}
+
+.inputFields{
+    width: 90%;
+}

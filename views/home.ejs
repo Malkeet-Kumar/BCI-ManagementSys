@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        .homeContainer {
+            margin-top: 180px;
+            width: 100%;
+            padding: 3px 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        #prevTransactions {
+            width: 100%;
+            border-top: 1px solid grey;
+            border-bottom: 2px solid grey;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        #prevTransactions th {
+            border-bottom: 2px solid grey;
+            font-size: 14px;
+            text-align: center;
+            white-space: nowrap;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+
+        #prevTransactions td {
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'Times New Roman', Times, serif;
+            text-transform: uppercase;
+        }
+
+        #prevTransactions td,
+        #prevTransactions tr {
+            /* border
+            -left: 1px solid grey; */
+            border: 1px solid grey;
+            text-align: center;
+            padding: 10px 12px;
+        }
+
+        .homeContainer>div {
+            width: 100%;
+        }
+
+        .filterDiv {
+            padding: 10px 0px;
+        }
+
+        .navActionBar {
+            height: 40px;
+            width: 100%;
+            padding: 0px 20px;
+            box-shadow: 0px 2px 4px rgb(214, 214, 214);
+            position: fixed;
+            top: 140px;
+            z-index: 100;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navActionBtn {
+            padding: 5px 10px;
+            background-color: white;
+            border-radius: 5px;
+            border: 2px solid dodgerblue;
+            font-weight: 500;
+            color: dodgerblue;
+        }
+
+        .navActionBtn:hover{
+            box-shadow: 0px 0px 3px rgb(103, 179, 255);
+        }
+
+    </style>
+    <link rel="stylesheet" href="/styles/header.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+</head>
+
+<body>
+    <%- include('components/header') %>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+            integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+        <div class="navActionBar">
+            <div class="filters">
+                <select name="" id="year" class="navActionBtn">
+                    <option value="null">Choose Year</option>
+                    <option value="2023" selected>2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                    <option value="2029">2029</option>
+                    <option value="2030">2030</option>
+                </select>
+                <select name="" id="month" class="navActionBtn">
+                    <option value="null">Choose Month</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <button class="navActionBtn" id="fetch">Fetch Data</button>
+            </div>
+            <button class="navActionBtn" onclick="downloadExcel()">Export xls</button>
+        </div>
+        <div class="homeContainer">
+            <table id="prevTransactions"></table>
+        </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://unpkg.com/export-from-json/dist/umd/index.min.js"></script>
+<script>
+    let allData = [];
+    function downloadExcel() {
+        if(allData.length<=0){
+            swal.fire({
+                title:"No Data",
+                text:"Data is not available in the table",
+                icon:"warning"
+            })
+            return
+        }
+        const filename = new Date().toLocaleDateString() + "_report"
+        try {
+            const data = allData.map(d=>{
+                return {
+                    DATE:d.date,
+                    PRODUCT:d.name,
+                    CONSIGNOR:d.consignor,
+                    CONSIGNEE:d.consignee,
+                    DISPATCH_STATE:d.dispatchState,
+                    INVOICE_NO:d.invNo,
+                    INWARD_PCS:d.inwardStock,
+                    BOXES:d.boxes,
+                    OUTWARD_PCS:d.outwardStock,
+                    STOCK_BALANCE:d.stockBalance
+                }
+            })
+            window.exportFromJSON({ data:data, filename, exportType: "xls" })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+</script>
+<script>
+    let table;
+    const dailyCols = [
+        {
+            data: 'date',
+            title: "DATE"
+        },
+        {
+            data: 'name',
+            title: 'ITEM NAME'
+        },
+        {
+            data: "consignor",
+            title: "CONSIGNOR"
+        },
+        {
+            data: 'consignee',
+            title: "CONSIGNEE"
+        },
+        {
+            data: 'dispatchState',
+            title: "DISPATCH DATE"
+        },
+        {
+            data: 'invNo',
+            title: "INVOICE NUMBER"
+        },
+        {
+            data: 'inwardStock',
+            title: "INWARD PCS"
+        },
+        {
+            data: 'boxes',
+            title: "BOXES"
+        },
+        {
+            data: 'outwardStock',
+            title: 'OUTWARD PCS'
+        },
+        {
+            data: 'stockBalance',
+            title: "STOCK BALANCE"
+        },
+    ]
+
+    fetch("reports")
+    .then(res => res.json())
+    .then(data => {
+        allData = data
+        createTable(data)
+    })
+    .catch(err => alert(err))
+
+    document.getElementById("fetch").addEventListener('click', e => {
+        const month = document.getElementById("month").value || new Date().getMonth()+1
+        const year = document.getElementById("year").value
+        fetch("reports?month=" +month+"&year="+year)
+            .then(res => res.json())
+            .then(data => {
+                allData = data
+                createTable(data)
+            })
+            .catch(err => alert(err))
+        const newData = JSON.parse(data)
+    })
+
+    function createTable(d) {
+        const data = d || []
+        if (table) {
+            table.clear().rows.add(data).draw();
+        } else {
+            table = new $("#prevTransactions").DataTable(
+                {
+                    data: data,
+                    columns: dailyCols,
+                }
+            );
+        }
+    }
+</script>
+
+</html>

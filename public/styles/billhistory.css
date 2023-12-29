@@ -1,0 +1,23 @@
+.actionBtn{
+    background-color: orangered;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 1px 1px 4px black;
+}
+
+.container{
+    margin-top: 170px;
+    padding: 0 20px;
+}
+
+#billsTable >tbody>tr>td{
+    border-bottom: 1px solid rgb(172, 171, 171);
+    text-align: center;
+}
+
+#billsTable >thead>tr>th{
+    text-align: center;
+    border-top: 1px solid rgb(172, 171, 171);
+}

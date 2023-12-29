@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        .updateStockInput {
+            width: 60px;
+            padding: 5px 8px;
+        }
+
+        .updateStockBtn {
+            margin: 2px;
+            padding: 5px 8px;
+            background-color: crimson;
+            color: white;
+            border: none;
+        }
+
+        .updateStockCell {
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+        }
+
+        .popupForm {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 100%;
+            background-color: rgba(199, 195, 195, 0.308);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popupForm h3 {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .updateStockDetailsFrom {
+            position: relative;
+            height: 420px;
+            width: 350px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 2px 2px 4px rgb(197, 197, 197);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+            padding: 10px;
+        }
+
+        .closePopupBtn {
+            position: absolute;
+            right: -5px;
+            top: -5px;
+            height: 20px;
+            width: 20px;
+            text-transform: capitalize;
+            background-color: black;
+            color: white;
+            font-weight: 700;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .inputField {
+            padding: 10px;
+            width: 100%;
+        }
+
+        .popupInputItem {
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .cancelBtn,
+        .updateBtn {
+            height: 40px;
+            width: 80px;
+            border: 1px solid dodgerblue;
+            color: dodgerblue;
+            background-color: white;
+            font-weight: 700;
+        }
+
+        .updateBtn {
+            background-color: dodgerblue;
+            color: white;
+        }
+
+        .updateBtn:hover,
+        .cancelBtn:hover {
+            box-shadow: 0px 0px 4px rgb(128, 185, 243);
+        }
+
+        .addStockForm {
+            height: 400px;
+            width: 350px;
+            background-color: white;
+            border-radius: 10px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+            box-shadow: 2px 2px 4px rgb(209, 208, 208);
+            padding: 10px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+    <link rel="stylesheet" href="/styles/header.css">
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    <%- include('components/header') %>
+        <div class="content-1">
+            <div class="table-div">
+                <table id="itemsTable"></table>
+            </div>
+            <div class="form-div" id="addItemForm">
+                <h2>Enter Stock Details</h2>
+                <div class="item-form">
+                    <div class="label-div">
+                        <label class="add-item-label" for="invNumer">Inv Number</label>
+                        <label class="add-item-label" for="consignerName">Consignor</label>
+                        <label class="add-item-label" for="stockDate">Date</label>
+                        <label class="add-item-label" for="name">Item Name</label>
+                        <label class="add-item-label" for="hsn">HSN No.</label>
+                        <label class="add-item-label" for="stock">Stock</label>
+                        <label class="add-item-label" for="unit">Unit</label>
+                        <label class="add-item-label" for="price">Price</label>
+                        <label class="add-item-label" for="gst">GST(%)</label>
+                    </div>
+                    <div class="input-div">
+                        <input class="add-item-input" type="text" name="" id="invNumber" placeholder="Invoice Number">
+                        <input class="add-item-input" type="text" name="" id="consignorName" placeholder="Consignor Name">
+                        <input class="add-item-input" type="date" name="" id="stockDate" onclick="showDate(event)">
+                        <input class="add-item-input" type="text" name="name" id="name" placeholder="Item Name">
+                        <input class="add-item-input" type="text" name="hsn" id="hsn" placeholder="Ex. 210690">
+                        <input class="add-item-input" type="number" name="stock" id="stock" placeholder="Ex. 100">
+                        <input class="add-item-input" name="unit" id="unit" list="units" placeholder="Ex. Kilo Gram" />
+                        <datalist id="units">
+                            <option value="GMs">Grams</option>
+                            <option value="KGs">Kilo Grams</option>
+                            <option value="Pcs">Pieces</option>
+                            <option value="Ltr">Liter</option>
+                            <option value="MLtr">Milli Liter</option>
+                        </datalist>
+                        <input class="add-item-input" type="number" name="price" id="price" placeholder="Ex. 225">
+                        <input class="add-item-input" type="number" name="gst" id="gst" placeholder="Ex. 5">
+                    </div>
+                </div>
+                <input type="submit" name="upload" id="upload" value="Add Item">
+            </div>
+            <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                <button class="actionOpenClose" id="openCloseForm">
+                    < </button>
+            </div>
+        </div>
+        <div class="popupForm" id="popupForm">
+            <div class="updateStockDetailsFrom">
+                <h3>Update Details</h3>
+                <input type="text" id="updateItemId" hidden>
+                <button class="closePopupBtn" onclick="hidePopUp()">&times;</button>
+                <div class="popupInputItem">
+                    <label for="">New Name</label>
+                    <input class="inputField" type="text" name="name" id="newName" placeholder="Name">
+                </div>
+                <div class="popupInputItem">
+                    <label for="">New HSN Code</label>
+                    <input class="inputField" type="text" name="hsn" id="newHsn" placeholder="HSN">
+                </div>
+                <div class="popupInputItem">
+                    <label for="">New Price</label>
+                    <input class="inputField" type="text" name="price" id="newPrice" placeholder="Price">
+                </div>
+                <div class="popupInputItem">
+                    <label for="">New Unit</label>
+                    <input class="inputField" type="text" name="unit" id="newUnit" placeholder="Unit">
+                </div>
+                <div class="popupInputItem">
+                    <label for="">New GST(%)</label>
+                    <input class="inputField" type="text" name="gst" id="newGst" placeholder="Gst">
+                </div>
+                <div style="width: 50%; display: flex; justify-content: space-between; align-items: center;">
+                    <button class="cancelBtn" onclick="hidePopUp(event)">Cancel</button>
+                    <button class="updateBtn" onclick="editProduct()">Update</button>
+                </div>
+            </div>
+        </div>
+        <div class="popupForm" id="addStockForm">
+            <div class="addStockForm">
+                <h3>Add Stock</h3>
+                <button class="closePopupBtn" onclick="hidePopUp(event)">&times;</button>
+                <input type="text" name="id" id="addStockItemId" hidden>
+                <div class="popupInputItem">
+                    <label for="">Invoice Number</label>
+                    <input class="inputField" type="text" name="" id="invoice_number" placeholder="Invoice Number">
+                </div>
+                <div class="popupInputItem">
+                    <label for="">Consignor Name</label>
+                    <input class="inputField" type="text" name="" id="consignor_name" placeholder="Consignor Name">
+                </div>
+                <div class="popupInputItem">
+                    <label for="">Date</label>
+                    <input class="inputField" type="date" name="" id="updateStock_date">
+                </div>
+                <div class="popupInputItem">
+                    <label for="">Inward Stock</label>
+                    <input class="inputField" type="text" name="" id="inward_stock" placeholder="Inward Stock">
+                </div>
+                <div style="width: 50%; display: flex; justify-content: space-between; align-items: center;">
+                    <button class="cancelBtn" onclick="hidePopUp(event)">Cancel</button>
+                    <button class="updateBtn" onclick="updateStock()">Add Stock</button>
+                </div>
+            </div>
+        </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+
+    function showDate(e){
+        console.log(new Date(e.target.valueAsDate).getMonth());
+    }
+
+    var popup = document.getElementById("popupForm")
+    var addStockPopup = document.getElementById("addStockForm")
+    function hidePopUp() {
+        popup.style.display = "none"
+        addStockPopup.style.display = "none"
+        invoice_number.value = ""
+        consignor_name.value = ""
+        inward_stock.value = ""
+        newName.value = ""
+        newPrice.value = ""
+        newHsn.value = ""
+        newGst.value = ""
+        newUnit.value = ""
+    }
+</script>
+<script src="/js/additems.js"></script>
+<script>
+    function openStockUpdatePopup(id) {
+        const hiddenInput = document.getElementById("addStockItemId")
+        hiddenInput.value = id
+        addStockPopup.style.display = "flex"
+    }
+    function openItemUpdateForm(id){
+        const hiddenInput = document.getElementById("updateItemId")
+        hiddenInput.value = id
+        const prevData = catalogue.filter(item=>item._id===id)
+        // console.log(prevData);
+        newName.value = prevData[0].name
+        newPrice.value = prevData[0].price
+        newHsn.value = prevData[0].hsn
+        newGst.value = prevData[0].gst
+        newUnit.value = prevData[0].unit
+        popup.style.display = "flex"
+    }
+</script>
+
+</html>

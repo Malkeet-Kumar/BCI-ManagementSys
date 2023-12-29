@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+    </style>
+    <link rel="stylesheet" href="/styles/bill.css">
+</head>
+
+<body>
+    <div style="padding: 0;
+                width: 98%;
+                margin: 20px auto;
+                border: 2px solid black;
+                padding-bottom: 30px;
+                position: static;"
+                id="invoicePdf">
+        <div style=" height: 100px;
+                    display: flex;
+                    border-bottom: 1px solid black;">
+            <div style=" width: 100%;
+                        background-color: none;
+                        background-size: contain;
+                        background-repeat: no-repeat;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: space-evenly;">
+                <img src='../public/images/logo.png' alt="" style="position: fixed; z-index: -1; top: 21px; left: 1%; height: 100px;">
+                <p>Tax Invoice</p>
+                <h2>HAR HITH STORE DERA SLIMPUR</h2>
+                <p>Mobile: {{user.mobile}}, Gmail: {{user.mail}}</p>
+            </div>
+        </div>
+
+        <div style="height: 25px;
+                    width: 100%;
+                    border-bottom: 1px solid black;
+                    margin: 0;
+                    display: flex;
+                    justify-content: space-evenly;
+                    align-items: center;
+                    font-weight: bold;
+                    background-color: rgb(191, 223, 223);">
+            <p>GSTIN: {{user.gst}}</p>
+            <p>PAN NO: {{user.pan }}</p>
+        </div>
+
+        <div style="height: 25px;
+                    width: 100%;
+                    border-bottom: 1px solid black;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;">
+            <p>Franchise Partner: Har Hith Store (Haryana Govt. Retail Stores)</p>
+        </div>
+
+        <div style="height: 25px;
+                    width: 100%;
+                    border-bottom: 1px solid black;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;">
+            <p>Deals in: Stationary, Grocery, etc</p>
+        </div>
+
+        <div style="height: 60px;
+                    border-bottom: 1px solid black;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-evenly;
+                    padding-left: 10px;">
+            <p>Invoice Number: 001</p>
+            <p>Invoice Date: 14/11/23</p>
+        </div>
+
+        <div style="height: 60px;
+                    border-bottom: 1px solid black;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-evenly;
+                    padding-left: 10px;
+                    padding: 0;
+                    height: 80px;
+                    width: 100%;">
+            <div style="height: 25px;
+                        padding-left: 10px;
+                        width: 100%;
+                        border-bottom: 1px solid black;
+                        display: flex;
+                        align-items: center;">
+                <p>Recepient: Sumit saini</p>
+            </div>
+            <div style="padding-left: 10px;
+                        width: 60%;
+                        display: flex;
+                        justify-content: space-between;">
+                <p>State: Haryana</p>
+                <p>State Code: 06</p>
+            </div>
+            <p style="margin-left: 10px;">GSTIN: </p>
+        </div>
+
+        <div style="width: 100%;
+                    border-bottom: 1px solid black;
+                    border-collapse: collapse;">
+            <table id="itemTable" class="itmeTable">
+                <thead>
+                    <tr>
+                        <th>Sr. No.</th>
+                        <th>Item</th>
+                        <th>HSN No.</th>
+                        <th>Unit</th>
+                        <th>Quantity</th>
+                        <th>Rate</th>
+                        <th>Gst (%)</th>
+                        <th>Amount (Rs.)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Sugar</td>
+                        <td>12312312</td>
+                        <td>KG</td>
+                        <td>2</td>
+                        <td>40</td>
+                        <td>5</td>
+                        <td>84</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="6"></td>
+                        <td>Grand Total</td>
+                        <td id="totalBill">84</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

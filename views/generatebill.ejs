@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        .billBtns {
+            margin: 10px 10px 0px 0px;
+            padding: 6px 14px;
+            border: 1px solid dodgerblue;
+            border-radius: 5px;
+            color: dodgerblue;
+            font-size: 14px;
+            background-color: transparent;
+            height: 30px;
+            width: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .billBtns:hover {
+            box-shadow: 0px 0px 4px rgb(70, 153, 236);
+        }
+
+        .billBtnsDisabled {
+            color: rgba(220, 20, 60, 0.438);
+            border-color: rgba(220, 20, 60, 0.438);
+        }
+
+        .billBtnsDisabled:hover {
+            box-shadow: 0px 0px 4px rgb(223, 47, 82);
+        }
+    </style>
+    <link rel="stylesheet" href="/styles/bill.css">
+    <link rel="stylesheet" href="/styles/header.css">
+</head>
+
+<body>
+    <%- include('components/header') %>
+        <div class="mainDiv" id="mainDiv">
+            <div class="invoiceMakerDiv" id="invoiceMakerDiv">
+                <div class="recepientsDetails">
+                    <div class="recepientsDetailsLabels">
+                        <label for="">Recepient:</label>
+                        <label for="">Recepient GSTIN: </label>
+                        <label for="">State:</label>
+                        <label for="">State Code:</label>
+                    </div>
+                    <div class="recepientsDetailsInputs">
+                        <input class="inputFields" type="text" name="recepientName" id="recepientNameInput"
+                            placeholder="Ex. John Doe">
+                        <input class="inputFields" type="text" name="recepientGst" id="recepientGstInput"
+                            placeholder="Customers Gst">
+                        <input class="inputFields" type="text" name="recepientState" id="recepientStateInput"
+                            placeholder="Ex. Haryana">
+                        <input class="inputFields" type="text" name="recepientStateCode" id="recepientStateCodeInput"
+                            placeholder="Ex.06">
+                    </div>
+                </div>
+                <div class="purchasedItems">
+                    <div style="display: flex; justify-content: center; height: 75%; width:75%;">
+                        <div class=""
+                            style="display: flex; flex-direction: column; align-items: flex-start; justify-content: space-evenly; width: 20%;">
+                            <label for="">Select Date:</label>
+                            <label for="">Select Item:</label>
+                            <label for="">Quantity:</label>
+                        </div>
+                        <div class=""
+                            style="display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; width: 80%;">
+                            <input class="inputFields" type="date" name="" id="chooseDate">
+                            <input class="inputFields" id="items" list="suggestions" class="inputFields"
+                                placeholder="Ex. Mixer">
+                            <datalist id="suggestions"></datalist>
+                            <input class="inputFields" type="number" name="quantity" id="quantity" class="inputFields"
+                                placeholder="Ex. 10">
+                        </div>
+                    </div>
+                    <button id="insertItem">Add item</button>
+                </div>
+                <div class="btnContainer"
+                    style="width: 15%; height: 100%; display: flex; flex-direction: column; align-items: end; ">
+                    <button id="newBill" class="billBtns" onclick="window.location.reload()" title="click for new bill">New Bill</button>
+                    <button onclick="saveBillOnServer(event)" class="billBtns" title="Click to save bill">Save Bill</button>
+                    <button id="printInvoice" class="billBtns" title="Click to open preview">Preview</button>
+                </div>
+            </div>
+            <%- include('components/bill') %>
+        </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+    integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+</script>
+<script>
+
+    let items;
+    let billAmount = 0;
+    let billItems = []
+    let billDetails;
+    let isSaving = false
+
+    const invoicePdf = document.getElementById("invoicePdf")
+    const invoiceMakerDiv = document.getElementById("invoiceMakerDiv")
+    const headerLogo = document.getElementById("headerLogo")
+    const headerNav = document.getElementById("headerNav")
+    const mainDiv = document.getElementById("mainDiv")
+    const recepientStateCode = document.getElementById("recepientStateCode")
+    const recepientState = document.getElementById("recepientState")
+    const recepientGst = document.getElementById("recepientGst")
+    const recepientName = document.getElementById("recepientName")
+    const newDate = document.getElementById("chooseDate")
+    newDate.valueAsDate = new Date()
+    const invDate = document.getElementById("invDate")
+    const invNo = document.getElementById("invNo")
+
+    function getIndex() {
+        let index = -1
+        const input = document.getElementById("items").value
+        items.forEach((t, i) => {
+            if (input == t.name)
+                index = i
+        })
+        return index
+    }
+
+    newDate.addEventListener("input", e => {
+        invDate.innerText = new Date(e.target.valueAsDate).toLocaleDateString()
+    })
+
+    document.getElementById("insertItem").addEventListener('click', e => {
+        const index = getIndex();
+        insertRowToBill(items[index])
+    })
+
+    document.getElementById("printInvoice").addEventListener('click', e => {
+        openPreview()
+    })
+
+    document.getElementById("recepientNameInput").addEventListener('input', e => {
+        recepientName.innerText = e.target.value
+        console.log(e.target.value);
+    })
+    document.getElementById("recepientGstInput").addEventListener('input', e => {
+        recepientGst.innerText = e.target.value
+        console.log(e.target.value);
+    })
+    document.getElementById("recepientStateInput").addEventListener('input', e => {
+        recepientState.innerText = e.target.value
+        console.log(e.target.value);
+    })
+    document.getElementById("recepientStateCodeInput").addEventListener('input', e => {
+        recepientStateCode.innerText = e.target.value
+        console.log(e.target.value);
+    })
+
+    function createCloseAndPrintButton() {
+        const div = document.createElement("div")
+        div.className = "floatingActionDiv"
+        div.innerHTML = `<button class="floatingActionBtn" title="Click to print bill" id="printPreview" onclick="printInvoice()"></button>
+                         <button class="floatingActionBtn" title="Click to close preview" id="closePreview" onclick="closePreview()"></button>`
+        return div
+    }
+</script>
+<script>
+    window.onbeforeunload = ()=>{
+        return ""
+    }
+</script>
+<script>
+    function openPreview() {
+        invoiceMakerDiv.style.display = "none"
+        headerLogo.style.display = "none"
+        headerNav.style.display = "none"
+        mainDiv.classList.add("preview")
+        mainDiv.appendChild(createCloseAndPrintButton())
+        invoicePdf.classList.add("preview")
+    }
+
+    function closePreview() {
+        invoiceMakerDiv.style.display = "flex"
+        headerLogo.style.display = "flex"
+        headerNav.style.display = "flex"
+        mainDiv.classList.remove("preview")
+        invoicePdf.classList.remove("preview")
+    }
+
+    function printInvoice(e) {
+        billDetails = {
+            invoiceNumber: invNo.innerText,
+            invoiceDate: newDate.valueAsDate,
+            recepientName: recepientName.innerText,
+            recepientState: recepientState.innerText,
+            recepientStateCode: recepientStateCode.innerText,
+            recepientGst: recepientGst.innerText
+        }
+        if (billDetails.recepientName == "") {
+            swal.fire({
+                title: "Details required",
+                text: "* marked details are required",
+                icon: 'warning',
+                confirmButtonText: 'Back'
+            })
+            closePreview()
+            return
+        } else if (billItems.length <= 0) {
+            swal.fire({
+                title: "Missing Items",
+                text: "Bill items are empty, cannot print. Please try entering some data in bill.",
+                icon: 'warning',
+                confirmButtonText: 'Back'
+            })
+            closePreview()
+            return
+        }
+        e.target.disabled = true
+        e.target.classList.add("billBtnsDisabled")
+        e.target.title="Please wait while we load"
+        fetch("/generatebill", {
+            method: "POST",
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                billDetails: billDetails,
+                billItems: billItems,
+                grandTotal: billAmount.toFixed(2)
+            })
+        })
+            .then((result) => {
+                if (result.ok) {
+                    print()
+                    swal.fire({
+                        title: "Bill Created",
+                        text: "The bill is created successfully and saved on server.",
+                        icon: 'success',
+                        confirmButtonText: 'Ok'
+                    })
+                    e.target.disabled = false
+                    e.target.title="Click to Preview"
+                    e.target.classList.remove("billBtnsDisabled")
+                } else if(result.status==304){
+                    print()
+                    swal.fire({
+                        title: "Already saved",
+                        text: "Bill is saved already you can print this",
+                        icon: 'success',
+                        confirmButtonText: 'Ok'
+                    })
+                    e.target.disabled = false
+                    e.target.title="Click to Preview"
+                    e.target.classList.remove("billBtnsDisabled")
+                }
+            }).catch((err) => {
+                swal.fire({
+                    title: "Server Error",
+                    text: err,
+                    icon: "error",
+                    confirmButtonText: 'Ok'
+                })
+                e.target.disabled = false
+                e.target.title="Click to Preview"
+                e.target.classList.remove("billBtnsDisabled")
+            });
+    }
+
+    function saveBillOnServer(e) {
+        billDetails = {
+            invoiceNumber: invNo.innerText,
+            invoiceDate: newDate.valueAsDate,
+            recepientName: recepientName.innerText,
+            recepientState: recepientState.innerText,
+            recepientStateCode: recepientStateCode.innerText,
+            recepientGst: recepientGst.innerText
+        }
+        if (billDetails.recepientName == "") {
+            swal.fire({
+                title: "Details required",
+                text: "* marked details are required",
+                icon: 'warning',
+                confirmButtonText: 'Back'
+            })
+            closePreview()
+            return
+        }  else if (billItems.length <= 0) {
+            swal.fire({
+                title: "Missing Items",
+                text: "Bill items are empty, can't save blank Bill. Please try entering some data in bill.",
+                icon: 'warning',
+                confirmButtonText: 'Back'
+            })
+            return
+        }
+        e.target.disabled = true
+        e.target.title="Please wait while we load"
+        e.target.classList.add("billBtnsDisabled")
+        fetch("/generatebill", {
+            method: "POST",
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                billDetails: billDetails,
+                billItems: billItems,
+                grandTotal: billAmount.toFixed(2)
+            })
+        })
+            .then((result) => {
+                if (result.ok) {
+                    swal.fire({
+                        title: "Bill Saved",
+                        text: "The bill is created successfully and saved on server.",
+                        icon: 'success',
+                        confirmButtonText: 'Ok'
+                    })
+                    e.target.disabled = false
+                    e.target.title="Click to save bill"
+                    e.target.classList.remove("billBtnsDisabled")
+                }
+            })
+            .catch((err) => {
+                swal.fire({
+                    title: "Server Error",
+                    text: err,
+                    icon: "error",
+                    confirmButtonText: 'Ok'
+                })
+                e.target.disabled = false
+                e.target.title="Click to save bill"
+                e.target.classList.remove("billBtnsDisabled")
+            });
+    }
+</script>
+<script>
+    let serial = 1;
+    fetch("/getCatalogue")
+        .then(res => res.json())
+        .then((result) => {
+            items = result
+            createSelectOps(result)
+            console.log(result)
+        }).catch((err) => {
+            alert(err)
+        });
+
+    function createSelectOps(items) {
+        const itemDropDown = document.getElementById("suggestions")
+        items.forEach((i, index) => {
+            const op = document.createElement("option")
+            op.className = index
+            op.value = i.name
+            itemDropDown.appendChild(op)
+        });
+    }
+
+    function insertRowToBill(item) {
+        console.log(item);
+        const quantity = document.getElementById("quantity").value
+        if (quantity <= 0) {
+            swal.fire({
+                title: "Enter Some Quantity",
+                text: "Quantity must be greater than 0",
+                icon: "warning",
+                confirmButtonText: 'Ok'
+            })
+            return
+        }
+        if (quantity > item.stock) {
+            swal.fire({
+                title: "Available Stock " + item.stock,
+                text: "Entered quantity exceeds available stock for this item.",
+                icon: "warning",
+                confirmButtonText: 'Ok'
+            })
+            return
+        }
+
+        const itemIndex = billItems.findIndex(i => i.id == item._id)
+
+        const itemInItemsIndex = items.findIndex(i => i._id == item._id)
+
+        if (itemIndex >= 0) {
+            billItems[itemIndex].quantity += Number(quantity);
+            const nQuant = billItems[itemIndex].quantity
+            const amount = (nQuant * item.price) + (((nQuant * item.price) * item.gst) / 100)
+            billItems[itemIndex].amount = amount
+
+            $("#c" + item._id).html(nQuant)
+            $("#camt" + item._id).html(amount)
+
+            items[itemInItemsIndex].stock -= Number(quantity)
+            setBillAmount()
+            return
+        }
+
+        const amount = (quantity * item.price) + (((quantity * item.price) * item.gst) / 100)
+        const row = document.createElement("tr")
+        row.id = "r" + item._id
+        row.innerHTML = `<td>${serial++}</td>
+                        <td>${item.name}</td>                
+                        <td>${item.hsn}</td>                
+                        <td>${item.unit}</td>                
+                        <td id="c${item._id}">${quantity}</td>                
+                        <td id="cp${item._id}">${item.price}</td>                
+                        <td>${item.gst}</td>                
+                        <td id="camt${item._id}">${amount}</td>`
+        const ob = {
+            id: item._id,
+            serial: serial - 1,
+            name: item.name,
+            hsn: item.hsn,
+            unit: item.unit,
+            quantity: Number(quantity),
+            price: item.price,
+            gst: item.gst,
+            amount: amount
+        }
+        billItems.push(ob)
+        items[itemInItemsIndex].stock -= Number(quantity)
+        $("#itemTable tbody").append(row)
+        setBillAmount()
+    }
+
+    function setBillAmount() {
+        billAmount = 0;
+        billItems.forEach(item => {
+            billAmount += item.amount
+        })
+        $("#totalBill").html(billAmount.toFixed(2))
+    }
+</script>
+</html>

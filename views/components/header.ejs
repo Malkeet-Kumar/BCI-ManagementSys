@@ -1,0 +1,19 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="header-logo" id="headerLogo">
+        <h1><%= user.store %></h1>
+</div>
+<div class="header-nav" id="headerNav">
+    <div class="nav-left">
+        <a class="nav-btn" href="/home">Home</a>
+        <a class="nav-btn" href="/addproducts">Stock</a>
+        <a class="nav-btn" href="/generatebill">Make Bill</a>
+        <a class="nav-btn" href="/billhistory">Bill History</a>
+    </div>
+    <div class="nav-right">
+        <div style="position: absolute; right: 157px; display: flex; background-color: #6A5ACD; border-radius: 20px 8px 8px 20px; display: flex; align-items: center; padding: 0 5px 0 0;">
+            <div style="height: 35px; width: 36px; background-color: #e40a40; border-radius: 50%; position: relative; top: 0; left: 0; display: flex; justify-content: center; align-items: center;"><i class="fa fa-user" aria-hidden="true" style="color: white;"></i></div>
+            <span style="color: white; margin-left: 5px; text-align: center;"><%= user.name %></span>
+        </div>
+        <a href="/logout" class="nav-btn useractions">Logout</a>
+    </div>
+</div>
