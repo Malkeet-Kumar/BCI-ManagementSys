@@ -111,7 +111,7 @@ async function updateStock(req,res){
     const id = req.body.id
     const stock = req.body.stock
     console.log("update stock");
-    Product.findOneAndUpdate({ _id: id }, { "$inc": { stock: +stock } }, { new: true })
+    Product.findOneAndUpdate({ _id: id }, { "$inc": { stock: stock } }, { new: true })
         .then(async(result) => {
             const newObj = {...result._doc,
                 shopKeeperId:req.session.userId,
